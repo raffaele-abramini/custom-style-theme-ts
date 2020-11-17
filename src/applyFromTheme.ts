@@ -1,16 +1,5 @@
 import { memoizer } from "./baseMemoizer";
 
-// const queryCheck = (s) => document.createDocumentFragment().querySelector(s);
-
-// const isSelectorValid = (selector) => {
-//   try {
-//     queryCheck(selector);
-//   } catch {
-//     return false;
-//   }
-//   return true;
-// };
-
 type AnyObject = Record<string, any>;
 
 type FormattedObj = {
@@ -80,14 +69,18 @@ const getRules = (customObj: AnyObject): [AnyObject, FormattedObj[]] => {
 
 const memoizedRules = memoizer(getRules) as typeof getRules;
 
-export const applyFromTheme = (customObj: AnyObject, p: AnyObject) => {
-  const [cssRules, formattedCustomRules] = memoizedRules(customObj);
+export const applyFromTheme = (themeKey: string) => (
+  props: AnyObject & { theme: AnyObject }
+) => {
+  const [cssRules, formattedCustomRules] = memoizedRules(props.theme[themeKey]);
 
   return formattedCustomRules.sort(sortBySpecificity).reduce(
     (acc: AnyObject, { conditions, styles }) => {
       if (
         conditions.every(({ propName, propVal }) => {
-          return p[propName] && p[propName].toString() === propVal.toString();
+          return (
+            props[propName] && props[propName].toString() === propVal.toString()
+          );
         })
       ) {
         acc = {

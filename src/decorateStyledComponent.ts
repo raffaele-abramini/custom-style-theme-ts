@@ -1,4 +1,7 @@
-export const get = <T>() => {
+import { PropsOf } from "@emotion/react";
+import { StyledComponent } from "@emotion/styled";
+
+const get = <T>() => {
   type PropValCouple = {
     prop: keyof T;
     val: T[keyof T];
@@ -23,6 +26,8 @@ export const get = <T>() => {
     get<K extends keyof T>(prop: K, val: T[K]): FancyArr & string {
       this.vals[this.lastItem] = this.vals[this.lastItem] || [];
       this.vals[this.lastItem].push({ prop, val });
+
+      // @ts-ignore
       return this;
     }
 
@@ -39,3 +44,18 @@ export const get = <T>() => {
     return new FancyArr(propKey, propVal);
   };
 };
+
+const decoratedComp = <T extends StyledComponent<PropsOf<T>>>(c: T) => {
+  type Props = PropsOf<T>;
+  const can = get<Props>();
+
+  const typedC = c as T & {
+    get: typeof can;
+  };
+
+  typedC.get = can;
+
+  return typedC;
+};
+
+export { decoratedComp as decorate };

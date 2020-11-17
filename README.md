@@ -1,3 +1,10 @@
 # custom-style-theme-ts
 
-Created with CodeSandbox
+A proof of concept of an Emotion Theme that applies styles based on props.
+
+Features:
+
+- Specificity checks
+- Nested elements
+- Type-safe typing
+- Memoization to prevent useless computations

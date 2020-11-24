@@ -4,26 +4,27 @@ import { Button } from "./Components/Button";
 
 import "./styles.css";
 
-// TODO
-// - [x] Support comma
-// - [] Add memo
-
+/*
+  Try adding custom rules here!
+*/
 const customTheme = {
   Button: {
     borderRadius: "4px",
 
-    // span: {
-    //   fontWeight: "bold"
-    // },
-
+    // String sytanx
     ".variant_primary.size_small": {
-      color: "yellow"
+      fontStyle: "italic"
     },
     ".variant_primary, variant_secondary": {
-      color: "red"
+      fontWeight: "bold"
     },
+
+    // Helper syntax
     [Button.get("variant", "secondary").and.get("size", "big")]: {
-      background: "white"
+      background: "lightgreen"
+    },
+    [Button.get("variant", "primary").and.get("disabled", "true")]: {
+      background: "tomato"
     }
   }
 };
@@ -31,6 +32,7 @@ const customTheme = {
 export default function App() {
   const [id, setId] = React.useState(0);
 
+  // Just stress testing performance
   React.useEffect(() => {
     setTimeout(() => setId(id + 1), 1000);
   }, [id]);
@@ -38,7 +40,7 @@ export default function App() {
   return (
     <div className="App">
       <ThemeProvider theme={customTheme}>
-        <Button variant="primary" id={id}>
+        <Button variant="primary" id={id} disabled={false}>
           Primary
         </Button>
         <Button variant="primary" size="small" id={id}>
@@ -46,6 +48,9 @@ export default function App() {
         </Button>
         <Button variant="secondary" id={id}>
           Secondary
+        </Button>
+        <Button variant="primary" id={id} disabled>
+          Primary disabled
         </Button>
       </ThemeProvider>
     </div>

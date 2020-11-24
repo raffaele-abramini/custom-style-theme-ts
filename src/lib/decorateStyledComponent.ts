@@ -1,10 +1,11 @@
-import { PropsOf } from "@emotion/react";
+import * as React from "react";
 import { StyledComponent } from "@emotion/styled";
+import { PropsOf } from "@emotion/react";
 
 const get = <T>() => {
   type PropValCouple = {
     prop: keyof T;
-    val: T[keyof T];
+    val: T[keyof T] extends boolean ? "true" | "false" : T[keyof T];
   };
   class FancyArr {
     private vals: Record<string, PropValCouple[]> = {};
@@ -23,7 +24,10 @@ const get = <T>() => {
       return this;
     }
 
-    get<K extends keyof T>(prop: K, val: T[K]): FancyArr & string {
+    get<K extends keyof T>(
+      prop: K,
+      val: T[K] extends boolean ? "true" | "false" : T[K]
+    ): FancyArr & string {
       this.vals[this.lastItem] = this.vals[this.lastItem] || [];
       this.vals[this.lastItem].push({ prop, val });
 
@@ -41,15 +45,14 @@ const get = <T>() => {
   }
 
   return <K extends keyof T>(propKey: K, propVal: T[K]) => {
-    return new FancyArr(propKey, propVal);
+    return new FancyArr(propKey, propVal) as FancyArr & string;
   };
 };
 
-const decoratedComp = <T extends StyledComponent<PropsOf<T>>>(c: T) => {
-  type Props = PropsOf<T>;
-  const can = get<Props>();
+const decoratedComp = <T>(c: StyledComponent<T>) => {
+  const can = get<T>();
 
-  const typedC = c as T & {
+  const typedC = c as StyledComponent<T> & {
     get: typeof can;
   };
 

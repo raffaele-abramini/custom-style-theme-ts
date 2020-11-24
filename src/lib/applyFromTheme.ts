@@ -62,11 +62,14 @@ const getRules = (customObj: AnyObject): [AnyObject, FormattedObj[]] => {
   });
   console.log(cssRules);
 
-  const formattedCustomRules: FormattedObj[] = formatCustomRules(propVariants);
+  const formattedCustomRules: FormattedObj[] = formatCustomRules(
+    propVariants
+  ).sort(sortBySpecificity);
 
   return [cssRules, formattedCustomRules];
 };
 
+// let's make sure not to run this logic if the rules haven't changed
 const memoizedRules = memoizer(getRules) as typeof getRules;
 
 export const applyFromTheme = (themeKey: string) => (
@@ -74,7 +77,7 @@ export const applyFromTheme = (themeKey: string) => (
 ) => {
   const [cssRules, formattedCustomRules] = memoizedRules(props.theme[themeKey]);
 
-  return formattedCustomRules.sort(sortBySpecificity).reduce(
+  return formattedCustomRules.reduce(
     (acc: AnyObject, { conditions, styles }) => {
       if (
         conditions.every(({ propName, propVal }) => {

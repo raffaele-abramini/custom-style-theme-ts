@@ -1,6 +1,6 @@
-import styled, { StyledComponent } from "@emotion/styled";
-import { applyFromTheme } from "../applyFromTheme";
-import { get } from "../getProps";
+import styled from "@emotion/styled";
+import { applyFromTheme } from "../lib/applyFromTheme";
+import { decorate } from "../lib/decorateStyledComponent";
 
 type Props = {
   variant: "primary" | "secondary";
@@ -8,9 +8,7 @@ type Props = {
   disabled: boolean;
 };
 
-const can = get<Props>();
-
-export const Button = styled.button<Props>`
+const Button = decorate<Props>(styled.button<Props>`
   display: block;
   border: none;
   margin: 5px;
@@ -32,13 +30,15 @@ export const Button = styled.button<Props>`
   background: orange;
   `}
 
-  ${(p) => applyFromTheme(p.theme.Button, p)}
-` as StyledComponent<Props> & {
-  get: typeof can;
-};
+  ${applyFromTheme(
+    "Button"
+  )} /* important to call this function here to fetch and apply the custom rules from the Theme */
+`);
 
 Button.defaultProps = {
-  size: "big"
+  size: "big",
+  variant: "primary",
+  disabled: false
 };
 
-Button.get = can;
+export { Button };
